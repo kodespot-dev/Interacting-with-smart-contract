@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Number</title>
+    <!-- Load ethers.js UMD version -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+    <input type="number" id="numberInput" placeholder="Enter a number" />
+    <button onclick="saveNumber()">Save Number</button>
+
+    <script>
+        const contractAddress = "0x8F63d939Df7201324C89b52D1E3FFaC8Ab2be39E";
+        const contractABI = [
+            {
+                "inputs": [],
+                "name": "retrieve",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "num",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "save",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ];
+
+        async function saveNumber() {
+            const inputNumber = document.getElementById('numberInput').value;
+
+            if (!inputNumber) {
+                alert("Please enter a number");
+                return;
+            }
+
+            if (window.ethereum) {
+                try {
+                    // Connect to Ethereum provider
+                    const provider = new ethers.BrowserProvider(window.ethereum);
+                    const signer = await provider.getSigner();
+
+                    // Create contract instance
+                    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+                    // Send transaction to save number
+                    const tx = await contract.save(inputNumber);
+                    alert("Transaction sent! Waiting for confirmation...");
+
+                    // Wait for the transaction to be mined
+                    await tx.wait();
+
+                    alert("Number saved successfully!");
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Failed to save number.");
+                }
+            } else {
+                alert("Ethereum provider not found. Install MetaMask!");
+            }
+        }
+    </script>
+</body>
+</html>
