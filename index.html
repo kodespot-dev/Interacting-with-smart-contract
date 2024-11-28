@@ -7,9 +7,14 @@
     <!-- Load ethers.js UMD version -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.6.2/dist/ethers.umd.min.js"></script>
 </head>
+<!-- Address, ABI, Network -->
 <body>
+    <button onclick="connectWallet()">Connect Wallet</button>
     <input type="number" id="numberInput" placeholder="Enter a number" />
     <button onclick="saveNumber()">Save Number</button>
+    <button onclick="retrieve()">Retrieve Number</button>
+
+    <p>Current number: <span id="currentNumber"></span></p>
 
     <script>
         const contractAddress = "0x8F63d939Df7201324C89b52D1E3FFaC8Ab2be39E";
@@ -53,7 +58,7 @@
             if (window.ethereum) {
                 try {
                     // Connect to Ethereum provider
-                    const provider = new ethers.BrowserProvider(window.ethereum);
+                    const provider = new ethers.BrowserProvider(window.ethereum);//detecting your Metamask wallet
                     const signer = await provider.getSigner();
 
                     // Create contract instance
@@ -70,6 +75,40 @@
                 } catch (error) {
                     console.error("Error:", error);
                     alert("Failed to save number.");
+                }
+            } else {
+                alert("Ethereum provider not found. Install MetaMask!");
+            }
+        }
+
+        async function connectWallet() {
+            if (window.ethereum) {
+                try {
+                    // Request account access
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    alert("Wallet connected successfully!");
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Failed to connect wallet.");
+                }
+            } else {
+                alert("Ethereum provider not found. Install MetaMask!");
+            }
+        }
+
+        async function retrieve() {
+            if (window.ethereum) {
+                try {
+                    // Connect to Ethereum provider
+                    const provider = new ethers.BrowserProvider(window.ethereum);
+                    const contract = new ethers.Contract(contractAddress, contractABI, provider);
+
+                    // Retrieve number from contract
+                    const number = await contract.retrieve();
+                    alert("Current number: " + number);
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Failed to retrieve number.");
                 }
             } else {
                 alert("Ethereum provider not found. Install MetaMask!");

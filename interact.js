@@ -7,6 +7,10 @@ const CONTRACT_ADDRESS='0x8F63d939Df7201324C89b52D1E3FFaC8Ab2be39E'
 
 const abi = require('./abi.json')
 
+//
+//Address
+//ABI
+
 provider = new ethers.JsonRpcProvider(RPC_URL);
 signer = new ethers.Wallet(PRIVATE_KEY, provider)
 
